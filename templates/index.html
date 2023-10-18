@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/style.css">
+    <title>Filter and Choice, Transfer</title>
+<body>
+<form method="POST" id="filterForm">
+    <!-- 첫 번째 카테고리 선택 -->
+    <label>카테고리 선택</label>
+    <select id="categorySelect1" name="category1">
+        {% for category in categories.keys() %}
+            <option value="{{ category }}">{{ category }}</option>
+        {% endfor %}
+    </select>
+    
+    <label>상세조건 선택</label>
+    <select id="filterSelect1" name="filter1">
+        <!-- 선택한 카테고리에 따라 옵션을 동적으로 생성할 공간 -->
+    </select>
+
+    <!-- 두 번째 카테고리 선택 -->
+    <label>카테고리 선택</label>
+    <select id="categorySelect2" name="category2">
+        {% for category in categories.keys() %}
+            <option value="{{ category }}">{{ category }}</option>
+        {% endfor %}
+    </select>
+    
+    <label>상세조건 선택</label>
+    <select id="filterSelect2" name="filter2">
+        <!-- 선택한 카테고리에 따라 옵션을 동적으로 생성할 공간 -->
+    </select>
+
+    <!-- 세 번째 카테고리 선택 -->
+    <label>카테고리 선택</label>
+    <select id="categorySelect3" name="category3">
+        {% for category in categories.keys() %}
+            <option value="{{ category }}">{{ category }}</option>
+        {% endfor %}
+    </select>
+
+    <label>상세조건 선택</label>
+    <select id="filterSelect3" name="filter3">
+        <!-- 선택한 카테고리에 따라 옵션을 동적으로 생성할 공간 -->
+    </select>
+
+    <!-- 네번째 카테고리 선택-->
+     <label> 자기자본 (범위) </label>
+     <select id="categorySelect4" name="category4">
+         {% for category in categories.keys() %}
+             <option value="{{ category }}">{{ category }}</option>
+         {% endfor %}
+     </select>
+
+     <label> 자본금 범위 선택 </label>
+     <select id="filterSelect4" name="filter4">
+         <!-- 선택한 카테고리에 따라 옵션을 동적으로 생성할 공간 -->
+     </select>
+
+    <!-- 다섯번째 카테고리 선택-->
+    <label> 원하는 조건 직접 입력 </label>
+    <select id="categorySelect5" name="category5">
+        {% for category in categories.keys() %}
+            <option value="{{ category }}">{{ category }}</option>
+        {% endfor %}
+    </select>
+
+     <label> #기타 원하는 조건 직접 입력</label>
+     <select id="filterSelect5" name="filter5">
+         <!-- 선택한 카테고리에 따라 옵션을 동적으로 생성할 공간 -->
+     </select>
+
+    <label>거리 선택</label>
+    <select id="distanceSelect" name="distance">
+        <option value="500m 이내">500m 이내</option>
+        <option value="1km 이내">1km 이내</option>
+        <option value="2km 이내">2km 이내</option>
+    </select>
+
+    <!-- 검색 버튼 -->
+    <input type="submit" value="검색">
+</form>
+    
+
+<!-- 선택한 데이터 옵션 및 결과 표시 -->
+
+    <div id="selectedOptionsAndResults" style="text-align: center;">
+        <div>
+            <h3>선택한 조건이 아래에 표시됩니다</h3>
+        </div>
+        <ul id="selectedOptionsList" style="list-style: none; padding: 0;"></ul>
+    </div>
+
+
+<script>
+    // 카테고리 선택 시 해당 카테고리의 옵션을 동적으로 생성
+    function setupCategory(categorySelectId, filterSelectId) {
+        const categorySelect = document.getElementById(categorySelectId);
+        const filterSelect = document.getElementById(filterSelectId);
+        const categories = {{ categories | tojson | safe }};
+
+        categorySelect.addEventListener('change', () => {
+            const selectedCategory = categorySelect.value;
+            const categoryOptions = categories[selectedCategory];
+
+            // 이전에 생성된 필터 옵션 제거
+            filterSelect.innerHTML = '';
+
+            // 선택한 카테고리의 옵션을 동적으로 생성
+            categoryOptions.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                filterSelect.appendChild(optionElement);
+            });
+        });
+    }
+
+    // 다섯개의 카테고리 설정
+    setupCategory('categorySelect1', 'filterSelect1');
+    setupCategory('categorySelect2', 'filterSelect2');
+    setupCategory('categorySelect3', 'filterSelect3');
+    setupCategory('categorySelect4', 'filterSelect4');
+    setupCategory('categorySelect5', 'filterSelect5');
+
+    // 선택한 데이터 옵션 업데이트
+    const filterForm = document.getElementById('filterForm');
+    const selectedOptionsList = document.getElementById('selectedOptionsList');
+
+    filterForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // 선택한 데이터 옵션 가져오기
+        const selectedOptions = [];
+        const categorySelect1 = document.getElementById('categorySelect1');
+        const categorySelect2 = document.getElementById('categorySelect2');
+        const categorySelect3 = document.getElementById('categorySelect3');
+        const categorySelect4 = document.getElementById('categorySelect4');
+        const categorySelect5 = document.getElementById('categorySelect5')
+
+        const filterSelect1 = document.getElementById('filterSelect1');
+        const filterSelect2 = document.getElementById('filterSelect2');
+        const filterSelect3 = document.getElementById('filterSelect3');
+        const filterSelect4 = document.getElementById('filterSelect4');
+        const filterSelect5 = document.getElementById('filterSelect5');
+
+        const distanceSelect = document.getElementById('distanceSelect');
+
+        selectedOptions.push(`${categorySelect1.value}: ${filterSelect1.value}`);
+        selectedOptions.push(`${categorySelect2.value}: ${filterSelect2.value}`);
+        selectedOptions.push(`${categorySelect3.value}: ${filterSelect3.value}`);
+        selectedOptions.push(`${categorySelect4.value}: ${filterSelect4.value}`);
+        selectedOptions.push(`${categorySelect5.value}: ${filterSelect5.value}`);
+        selectedOptions.push(`거리 - ${distanceSelect.value}`);
+
+        // 선택한 데이터 옵션을 리스트에 표시
+        selectedOptionsList.innerHTML = '';
+        selectedOptions.forEach(option => {
+            const li = document.createElement('li');
+            li.textContent = option;
+            selectedOptionsList.appendChild(li);
+        });
+    });
+</script>
+</body>
+</html>
